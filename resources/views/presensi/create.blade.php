@@ -85,8 +85,8 @@
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
-        // var marker = L.marker([-6.931259213116736, 107.71826067763392]).addTo(map); //set posisi kita
-        var marker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map); //set posisi kita
+        var marker = L.marker([-6.931259213116736, 107.71826067763392]).addTo(map); //set posisi kita
+        // var marker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map); //set posisi kita
         var circle = L.circle([-6.931259213116736, 107.71826067763392], { // Set Radius untuk absensi
             color: 'red',
             fillColor: '#f03',
