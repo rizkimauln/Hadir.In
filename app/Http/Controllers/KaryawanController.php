@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Karyawan;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -91,10 +92,11 @@ class KaryawanController extends Controller
         return view('karyawan.edit', compact('departemen', 'karyawan'));
     }
 
-    public function update(Request $request)
+    public function update($nik, Request $request)
     {
 
-        $nik          = $request->nik;
+        $nik = Crypt::decrypt($nik);
+        $nik_baru         = $request->nik_baru;
         $nama_lengkap = $request->nama_lengkap;
         $jabatan      = $request->jabatan;
         $no_hp        = $request->no_hp;
@@ -109,8 +111,13 @@ class KaryawanController extends Controller
             $foto = $old_foto;
         }
 
+        $ceknik = DB::table('karyawan')->where('nik',$nik_baru)->count();
+        if ($ceknik > 0){
+            return Redirect::back()->with(['warning' => 'NIK Sudah Ada']);
+        }
         try {
             $data = [
+                'nik' => $nik_baru,
                 'nama_lengkap' => $nama_lengkap,
                 'jabatan'      => $jabatan,
                 'no_hp'        => $no_hp,

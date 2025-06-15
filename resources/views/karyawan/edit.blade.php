@@ -1,4 +1,4 @@
-<form action="/karyawan/{{ $karyawan->nik }}/update" method="POST" id="frmkaryawan" enctype="multipart/form-data">
+<form action="/karyawan/{{Crypt::encrypt ($karyawan->nik) }}/update" method="POST" id="frmkaryawan" enctype="multipart/form-data">
     @csrf
     <div class="row">
         <div class="col-12">
@@ -10,7 +10,7 @@
                         <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
                     </svg>
                 </span>
-                <input type="text" readonly value="{{ $karyawan->nik }}" id="nik" class="form-control" name="nik" placeholder="NIK">
+                <input type="text" value="{{ $karyawan->nik }}" id="nik" class="form-control" name="nik_baru" placeholder="NIK">
             </div>
         </div>
     </div>

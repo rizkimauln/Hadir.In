@@ -6,17 +6,16 @@
                 <strong>Home</strong>
             </div>
         </a>
-        <a href="/presensi/histori" class="item {{ request()->is('#') ? 'active' : '' }}">
+        <a href="/presensi/histori" class="item {{ request()->is('presensi/histori') ? 'active' : '' }}">
             <div class="col">
                 <ion-icon name="document-text-outline"></ion-icon>
                 <strong>History</strong>
             </div>
         </a>
-        <a href="/presensi/create" class="item ">
+        <a href="/presensi/create" class="item {{ request()->is('presensi/create') ? 'active' : '' }}">
             <div class="col">
-                <div class="action-button large">
-                    <ion-icon name="camera" role="img" class="md hydrated" aria-label="add outline"></ion-icon>
-                </div>
+                <ion-icon name="finger-print-outline"></ion-icon>
+                <strong>Absen</strong>
             </div>
         </a>
         <a href="/presensi/izin" class="item {{ request()->is('presensi/izin') ? 'active' : '' }}">

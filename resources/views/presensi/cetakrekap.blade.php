@@ -50,34 +50,42 @@
             vertical-align: middle;
             font-size: 10px;
         }
+
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        
     </style>
 </head>
 
 <body class="A4 landscape">
     @php
-        function selisih($jam_masuk, $jam_keluar) {
-            list($h, $m, $s) = explode(":", $jam_masuk);
-            $dtAwal = mktime($h, $m, $s, "1", "1", "1");
-            list($h, $m, $s) = explode(":", $jam_keluar);
-            $dtAkhir = mktime($h, $m, $s, "1", "1", "1");
-            $dtSelisih = $dtAkhir - $dtAwal;
-            $totalmenit = $dtSelisih / 60;
-            $jam = explode(".", $totalmenit / 60);
-            $sisamenit = ($totalmenit / 60) - $jam[0];
-            $sisamenit2 = $sisamenit * 60;
-            $jml_jam = $jam[0];
-            return $jml_jam . ":" . round($sisamenit2);
-        }
+    function selisih($jam_masuk, $jam_keluar) {
+    list($h, $m, $s) = explode(":", $jam_masuk);
+    $dtAwal = mktime($h, $m, $s, "1", "1", "1");
+    list($h, $m, $s) = explode(":", $jam_keluar);
+    $dtAkhir = mktime($h, $m, $s, "1", "1", "1");
+    $dtSelisih = $dtAkhir - $dtAwal;
+    $totalmenit = $dtSelisih / 60;
+    $jam = explode(".", $totalmenit / 60);
+    $sisamenit = ($totalmenit / 60) - $jam[0];
+    $sisamenit2 = $sisamenit * 60;
+    $jml_jam = $jam[0];
+    return $jml_jam . ":" . round($sisamenit2);
+    }
 
-        $chunks = collect();
-        $chunks->push($rekap->slice(0, 18));
-        $remaining = $rekap->slice(18);
-        if ($remaining->count() > 0) {
-            $chunks = $chunks->merge($remaining->chunk(20));
-        }
+    $chunks = collect();
+    $chunks->push($rekap->slice(0, 18));
+    $remaining = $rekap->slice(18);
+    if ($remaining->count() > 0) {
+    $chunks = $chunks->merge($remaining->chunk(20));
+    }
 
-        $liburMerahSet = array_flip($liburMerah);
-        $cutiBersamaSet = array_flip($cutiBersama);
+    $liburMerahSet = array_flip($liburMerah);
+    $cutiBersamaSet = array_flip($cutiBersama);
     @endphp
 
     @foreach($chunks as $index => $chunk)
@@ -106,12 +114,12 @@
             <tr>
                 @for ($i = 1; $i <= 31; $i++)
                     @php
-                        $tanggal = $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
-                        $hari = \Carbon\Carbon::parse($tanggal)->translatedFormat('l');
-                        $isMinggu = $hari === 'Minggu';
+                    $tanggal=$tahun . '-' . str_pad($bulan, 2, '0' , STR_PAD_LEFT) . '-' . str_pad($i, 2, '0' , STR_PAD_LEFT);
+                    $hari=\Carbon\Carbon::parse($tanggal)->translatedFormat('l');
+                    $isMinggu = $hari === 'Minggu';
                     @endphp
                     <th style="{{ $isMinggu ? 'background-color: #f8d7da;' : '' }}">{{ $i }}</th>
-                @endfor
+                    @endfor
             </tr>
 
             @foreach ($chunk as $d)
@@ -119,72 +127,72 @@
                 <td>{{ $d->nik }}</td>
                 <td>{{ $d->nama_lengkap }}</td>
                 @php
-                    $totalhadir = 0;
-                    $totalizin = 0;
-                    $totalsakit = 0;
-                    $totalalpa = 0;
-                    $totalterlambat = 0;
+                $totalhadir = 0;
+                $totalizin = 0;
+                $totalsakit = 0;
+                $totalalpa = 0;
+                $totalterlambat = 0;
                 @endphp
                 @for ($i = 1; $i <= 31; $i++)
                     @php
-                        $tglKey = 'tgl_' . $i;
-                        $tanggal = $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
-                        $today = date('Y-m-d');
-                        $hadirData = $d->$tglKey;
-                        $izin = $izinSakit->where('nik', $d->nik)->where('tgl_izin', $tanggal)->first();
-                        $kode = '';
-                        $bgStyle = '';
-                        $hari = \Carbon\Carbon::parse($tanggal)->translatedFormat('l');
-                        $isMinggu = $hari === 'Minggu';
+                    $tglKey='tgl_' . $i;
+                    $tanggal=$tahun . '-' . str_pad($bulan, 2, '0' , STR_PAD_LEFT) . '-' . str_pad($i, 2, '0' , STR_PAD_LEFT);
+                    $today=date('Y-m-d');
+                    $hadirData=$d->$tglKey;
+                    $izin = $izinSakit->where('nik', $d->nik)->where('tgl_izin', $tanggal)->first();
+                    $kode = '';
+                    $bgStyle = '';
+                    $hari = \Carbon\Carbon::parse($tanggal)->translatedFormat('l');
+                    $isMinggu = $hari === 'Minggu';
 
-                        if ($isMinggu || isset($liburMerahSet[$tanggal]) || isset($cutiBersamaSet[$tanggal])) {
-                            $bgStyle = 'background-color:#f8d7da;';
-                        }
+                    if ($isMinggu || isset($liburMerahSet[$tanggal]) || isset($cutiBersamaSet[$tanggal])) {
+                    $bgStyle = 'background-color:#f8d7da;';
+                    }
                     @endphp
 
                     @if ($isMinggu || isset($liburMerahSet[$tanggal]) || isset($cutiBersamaSet[$tanggal]))
-                        <td style="{{ $bgStyle }}"></td>
+                    <td style="{{ $bgStyle }}"></td>
                     @elseif ($hadirData)
-                        @php
-                            $jam = explode('-', $hadirData);
-                            $jam_masuk = $jam[0];
-                            $jam_pulang = $jam[1];
-                            $totalhadir++;
-                            $terlambat = ($jam_masuk > '08:00');
-                            if ($terlambat) $totalterlambat++;
-                            $kode = 'H';
-                        @endphp
-                        <td><strong style="color: {{ $terlambat ? 'red' : 'black' }}">{{ $kode }}</strong></td>
+                    @php
+                    $jam = explode('-', $hadirData);
+                    $jam_masuk = $jam[0];
+                    $jam_pulang = $jam[1];
+                    $totalhadir++;
+                    $terlambat = ($jam_masuk > '08:00');
+                    if ($terlambat) $totalterlambat++;
+                    $kode = 'H';
+                    @endphp
+                    <td><strong style="color: {{ $terlambat ? 'red' : 'black' }}">{{ $kode }}</strong></td>
                     @elseif ($izin)
-                        @if ($izin->status_pengajuan == 1)
-                            @php
-                                if ($izin->status == 'i') {
-                                    $totalizin++;
-                                    $kode = 'I';
-                                } elseif ($izin->status == 's') {
-                                    $totalsakit++;
-                                    $kode = 'S';
-                                }
-                            @endphp
-                            <td><strong>{{ $kode }}</strong></td>
-                        @elseif ($tanggal < $today)
-                            @php $totalalpa++; $kode = 'A'; @endphp
-                            <td><strong>{{ $kode }}</strong></td>
-                        @else
-                            <td></td>
-                        @endif
+                    @if ($izin->status_pengajuan == 1)
+                    @php
+                    if ($izin->status == 'i') {
+                    $totalizin++;
+                    $kode = 'I';
+                    } elseif ($izin->status == 's') {
+                    $totalsakit++;
+                    $kode = 'S';
+                    }
+                    @endphp
+                    <td><strong>{{ $kode }}</strong></td>
                     @elseif ($tanggal < $today)
-                        @php $totalalpa++; $kode = 'A'; @endphp
+                        @php $totalalpa++; $kode='A' ; @endphp
                         <td><strong>{{ $kode }}</strong></td>
-                    @else
+                        @else
                         <td></td>
-                    @endif
-                @endfor
-                <td>{{ $totalhadir }}</td>
-                <td>{{ $totalterlambat }}</td>
-                <td>{{ $totalizin }}</td>
-                <td>{{ $totalsakit }}</td>
-                <td>{{ $totalalpa }}</td>
+                        @endif
+                        @elseif ($tanggal < $today)
+                            @php $totalalpa++; $kode='A' ; @endphp
+                            <td><strong>{{ $kode }}</strong></td>
+                            @else
+                            <td></td>
+                            @endif
+                            @endfor
+                            <td>{{ $totalhadir }}</td>
+                            <td>{{ $totalterlambat }}</td>
+                            <td>{{ $totalizin }}</td>
+                            <td>{{ $totalsakit }}</td>
+                            <td>{{ $totalalpa }}</td>
             </tr>
             @endforeach
         </table>

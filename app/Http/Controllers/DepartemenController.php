@@ -32,12 +32,16 @@ class DepartemenController extends Controller
         $kode_dept = $request->kode_dept;
         $nama_dept = $request->nama_dept;
 
-        // Cek apakah nama_dept sudah ada
-        $cek = DB::table('departemen')->where('nama_dept', $nama_dept)->first();
+        // Cek apakah nama_dept atau kode_dept sudah ada
+        $cek = DB::table('departemen')
+            ->where('nama_dept', $nama_dept)
+            ->orWhere('kode_dept', $kode_dept)
+            ->first();
 
         if ($cek) {
-            return redirect()->back()->with('warning', 'Data dengan nama "' . $nama_dept . '" sudah ada!');
+            return redirect()->back()->with('warning', 'Data dengan nama atau kode "' . $nama_dept . ' / ' . $kode_dept . '" sudah ada!');
         }
+
 
         $data = [
             'kode_dept' => $kode_dept,
@@ -66,8 +70,17 @@ class DepartemenController extends Controller
     // update data
     public function update($kode_dept, Request $request)
     {
+        $kode_dept_baru = $request->kode_dept_baru;
         $nama_dept = $request->nama_dept;
+
+
+        $cekkode_dept = DB::table('departemen')->where('kode_dept', $kode_dept_baru)->count();
+        if ($cekkode_dept > 0) {
+            return Redirect::back()->with(['warning' => 'Kode Departemen Sudah Ada']);
+        }
+
         $data = [
+            'kode_dept' => $kode_dept_baru,
             'nama_dept' => $nama_dept
         ];
 

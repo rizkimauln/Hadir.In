@@ -10,7 +10,7 @@
                                         <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
                                     </svg>
                                 </span>
-                                <input type="text" value="{{ $departemen->kode_dept }}" id="kode_dept" class="form-control" name="kode_dept" placeholder="Kode Departemen" readonly>
+                                <input type="text" value="{{ $departemen->kode_dept }}" id="kode_dept" class="form-control" name="kode_dept_baru" placeholder="Kode Departemen">
                             </div>
                         </div>
                     </div>
