@@ -94,40 +94,43 @@ class KaryawanController extends Controller
 
     public function update($nik, Request $request)
     {
-
-        $nik = Crypt::decrypt($nik);
-        $nik_baru         = $request->nik_baru;
-        $nama_lengkap = $request->nama_lengkap;
-        $jabatan      = $request->jabatan;
-        $no_hp        = $request->no_hp;
-        $kode_dept    = $request->kode_dept;
-        $password = Hash::make('123');
-        $old_foto = $request->old_foto;
-
-
+        $nik_baru       = $request->nik_baru;
+        $nama_lengkap   = $request->nama_lengkap;
+        $jabatan        = $request->jabatan;
+        $no_hp          = $request->no_hp;
+        $kode_dept      = $request->kode_dept;
+        $password       = Hash::make('123');
+        $old_foto       = $request->old_foto;
+    
         if ($request->hasFile('foto')) {
-            $foto = $nik . '.' . $request->file('foto')->getClientOriginalExtension();
+            $foto = $nik_baru . '.' . $request->file('foto')->getClientOriginalExtension();
         } else {
             $foto = $old_foto;
         }
-
-        $ceknik = DB::table('karyawan')->where('nik',$nik_baru)->count();
-        if ($ceknik > 0){
+    
+        // Perbaikan: cek nik_baru tapi abaikan data dengan nik lama
+        $ceknik = DB::table('karyawan')
+                    ->where('nik', $nik_baru)
+                    ->where('nik', '!=', $nik)
+                    ->count();
+    
+        if ($ceknik > 0) {
             return Redirect::back()->with(['warning' => 'NIK Sudah Ada']);
         }
+    
         try {
             $data = [
-                'nik' => $nik_baru,
-                'nama_lengkap' => $nama_lengkap,
-                'jabatan'      => $jabatan,
-                'no_hp'        => $no_hp,
-                'kode_dept'    => $kode_dept,
-                'foto'         => $foto,
-                'password'     => $password
+                'nik'           => $nik_baru,
+                'nama_lengkap'  => $nama_lengkap,
+                'jabatan'       => $jabatan,
+                'no_hp'         => $no_hp,
+                'kode_dept'     => $kode_dept,
+                'foto'          => $foto,
+                'password'      => $password
             ];
-
-            //menyimpan data yang di tambahkan
+    
             $update = DB::table('karyawan')->where('nik', $nik)->update($data);
+    
             if ($update) {
                 if ($request->hasFile('foto')) {
                     $folderPath = 'public/uploads/karyawan/';
@@ -137,6 +140,7 @@ class KaryawanController extends Controller
                 }
                 return Redirect::back()->with(['success' => 'Data Berhasil Diupdate']);
             }
+    
         } catch (\Exception $e) {
             // dd($e->getMessage());
             return Redirect::back()->with(['warning' => 'Data Gagal Diupdate']);
